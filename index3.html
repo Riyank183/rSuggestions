@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieMix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Vibrant Gradient Theme */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #2b1055, #7597de);
+            min-height: 100vh;
+            color: white;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        /* Header Styles */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+            border-radius: 15px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .search-bar {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px 20px;
+            border-radius: 30px;
+            width: 300px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            color: white;
+            margin-left: 10px;
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-input:focus {
+            outline: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .tagline {
+            font-size: 1.8rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+        }
+
+        .random-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            font-size: 1.3rem;
+            border-radius: 35px;
+            cursor: pointer;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .random-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.5);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 0;
+        }
+
+        .category-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        /* Movie Grid Styles */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 30px;
+            padding: 30px 0;
+            display: none;
+        }
+
+        .movie-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            cursor: pointer;
+            position: relative;
+            text-align: left;
+        }
+
+        .movie-poster {
+            height: 340px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .movie-rating {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .movie-info {
+            padding: 15px;
+        }
+
+        .movie-title {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .movie-genre {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .movie-plot {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.4;
+        }
+
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <!-- New Header -->
+    <header class="main-header">
+        <div class="logo">MovieMix</div>
+        <div class="search-bar">
+            <i class="fas fa-search" style="color: rgba(255,255,255,0.7);"></i>
+            <input type="text" class="search-input" placeholder="Search movies...">
+        </div>
+    </header>
+
+    <div class="container">
+        <header>
+            <h1>MovieMix</h1>
+            <p class="tagline">Discover Your Next Favorite Movie</p>
+            <button class="random-btn">Get Random Suggestion</button>
+        </header>
+
+        <div class="categories-grid">
+            <div class="category-card" data-genre="action">
+                <div class="category-icon action">🎬</div>
+                <p class="category-name action">Action</p>
+            </div>
+            <div class="category-card" data-genre="sci-fi">
+                <div class="category-icon sci-fi">🚀</div>
+                <p class="category-name sci-fi">Sci-Fi</p>
+            </div>
+            <div class="category-card" data-genre="comedy">
+                <div class="category-icon comedy">😂</div>
+                <p class="category-name comedy">Comedy</p>
+            </div>
+            <div class="category-card" data-genre="horror">
+                <div class="category-icon horror">👻</div>
+                <p class="category-name horror">Horror</p>
+            </div>
+            <div class="category-card" data-genre="romance">
+                <div class="category-icon romance">💖</div>
+                <p class="category-name romance">Romance</p>
+            </div>
+            <div class="category-card" data-genre="documentary">
+                <div class="category-icon documentary">📽️</div>
+                <p class="category-name documentary">Documentary</p>
+            </div>
+        </div>
+
+        <!-- Movies Grid -->
+        <div class="movies-grid" id="moviesGrid"></div>
+    </div>
+
+    <script>
+        // Sample Movie Data
+        const movies = [
+            {
+                title: "Galactic Warriors",
+                genre: "action",
+                rating: 8.7,
+                plot: "A team of elite soldiers battles alien invaders in a futuristic war for Earth's survival.",
+                poster: "https://via.placeholder.com/300x450/ff6b6b/ffffff?text=Action+Poster",
+                color: "#ff6b6b"
+            },
+            {
+                title: "Space Odyssey",
+                genre: "sci-fi",
+                rating: 9.1,
+                plot: "A crew of astronauts discovers a mysterious alien artifact in deep space.",
+                poster: "https://via.placeholder.com/300x450/4dabf7/ffffff?text=SciFi+Poster",
+                color: "#4dabf7"
+            },
+            {
+                title: "Laugh Riot",
+                genre: "comedy",
+                rating: 7.9,
+                plot: "A hilarious comedy about four friends starting a failing business together.",
+                poster: "https://via.placeholder.com/300x450/ffd93d/ffffff?text=Comedy+Poster",
+                color: "#ffd93d"
+            }
+        ];
+
+        // Category Click Handler
+        document.querySelectorAll('.category-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const genre = this.dataset.genre;
+                showMoviesByGenre(genre);
+            });
+        });
+
+        function showMoviesByGenre(genre) {
+            const filteredMovies = movies.filter(movie => movie.genre === genre);
+            const moviesGrid = document.getElementById('moviesGrid');
+            
+            moviesGrid.innerHTML = filteredMovies.map(movie => `
+                <div class="movie-card">
+                    <div class="movie-poster" style="background-image: url(${movie.poster})">
+                        <div class="movie-rating">⭐ ${movie.rating}</div>
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="movie-genre">${movie.genre.toUpperCase()}</div>
+                        <p class="movie-plot">${movie.plot}</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            moviesGrid.style.display = 'grid';
+            window.scrollTo({ top: moviesGrid.offsetTop, behavior: 'smooth' });
+        }
+
+        // Search Functionality
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredMovies = movies.filter(movie => 
+                movie.title.toLowerCase().includes(searchTerm) ||
+                movie.genre.toLowerCase().includes(searchTerm) ||
+                movie.plot.toLowerCase().includes(searchTerm)
+            );
+            showSearchResults(filteredMovies);
+        });
+
+        function showSearchResults(results) {
+            const moviesGrid = document.getElementById('moviesGrid');
+            moviesGrid.innerHTML = results.map(movie => `
+                <div class="movie-card">
+                    <div class="movie-poster" style="background-image: url(${movie.poster})">
+                        <div class="movie-rating">⭐ ${movie.rating}</div>
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="movie-genre">${movie.genre.toUpperCase()}</div>
+                        <p class="movie-plot">${movie.plot}</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            moviesGrid.style.display = results.length ? 'grid' : 'none';
+        }
+
+        // Star Animation
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 1.5 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        createStars();
+    </script>
+</body>
+</html>
